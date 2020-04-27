@@ -19,15 +19,27 @@ void UGrabber::BeginPlay()
 
 	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting for duty!"));
 
-	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	
+	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
+	if (InputComponent != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT(" %s has Pawn Movement Component"), *(GetOwner()->GetName()));
+		InputComponent->BindAction("Grab", EInputEvent::IE_Pressed, this, &UGrabber::Grab);
+	}
+	else
+	{
+
+	}
+
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if(PhysicsHandle != nullptr)
 	{
 
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT(" %s missing handle physics component"), *(GetOwner()->GetName()));
+		UE_LOG(LogTemp, Error, TEXT(" %s missing handle physics component"), *(GetOwner()->GetName()));
 	}
 	
 }
@@ -41,7 +53,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewPointLocation, OUT PlayerViewPointRotation);
 	
-	//UE_LOG(LogTemp, Warning, TEXT("Location: %s - Rotation: %s"), *PlayerViewPointLocation.ToString(), *PlayerViewPointRotation.ToString());
+
 
 	
 	FVector LineTraceEnd = PlayerViewPointLocation + (PlayerViewPointRotation.Vector() * Reach);
@@ -72,3 +84,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	
 }
 
+void UGrabber::Grab()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Press grab button"));
+}
