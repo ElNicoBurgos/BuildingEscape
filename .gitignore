@@ -17,3 +17,6 @@ BuildingEscape_4_20/Content/StarterContent
 #################################
 
 *.VC.db
+*.VC.opendb
+*.suo
+*.ipch
