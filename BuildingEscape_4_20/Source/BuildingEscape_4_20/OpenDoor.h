@@ -41,6 +41,6 @@ private:
 	float LastDoorOpenTime;
 
 	AActor *Owner;
-	AActor *ActorThatOpens;
-
+	
+	float GetTotalMassOfActorsOnPlate();
 };
