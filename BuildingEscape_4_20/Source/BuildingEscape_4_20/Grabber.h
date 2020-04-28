@@ -49,10 +49,12 @@ private:
 	// Return hit for first physics body in reach
 	FHitResult GetFirstPhysicsBodyInReach() const;
 
-	
+	// Return de linetrace vector
+	FVector GetPlayerReach() const;
 	
 
-	FTwoVectors GetLineTracePoints() const;
+	// Get player position in world
+	FVector GetPlayerPositionWorld() const;
 	
 	
 };

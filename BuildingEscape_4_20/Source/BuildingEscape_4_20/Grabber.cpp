@@ -35,7 +35,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		// move the object that we're holding
-		PhysicsHandle->SetTargetLocation(GetLineTracePoints().v2);
+		PhysicsHandle->SetTargetLocation(GetPlayerReach());
 	}
 }
 
@@ -66,11 +66,10 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 	/// Line-trace (AKA ray-cast) out to reach distance
 	FHitResult Hit;
 	FCollisionQueryParams TraceParameters(FName(""), false, GetOwner());
-	FTwoVectors TracePoints = GetLineTracePoints();
 	
 	GetWorld()->LineTraceSingleByObjectType(OUT Hit,
-											TracePoints.v1,
-											TracePoints.v2,
+											GetPlayerPositionWorld(),
+											GetPlayerReach(),
 											FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
 											TraceParameters);
 
@@ -87,14 +86,12 @@ void UGrabber::Grab()
 	
 	FHitResult HitResult = GetFirstPhysicsBodyInReach();
 	auto ComponentToGrab = HitResult.GetComponent();
-	auto ActorHit = HitResult.GetActor();
+	
 
-	if (ActorHit != nullptr)
+	if (HitResult.GetActor())
 	{
-		PhysicsHandle->GrabComponentAtLocation(ComponentToGrab, EName::NAME_None, ActorHit->GetActorLocation());
+		PhysicsHandle->GrabComponentAtLocation(ComponentToGrab, EName::NAME_None, GetPlayerReach());
 	}
-
-
 }
 
 void UGrabber::Release()
@@ -102,7 +99,7 @@ void UGrabber::Release()
 	PhysicsHandle->ReleaseComponent();	
 }
 
-FTwoVectors UGrabber::GetLineTracePoints() const
+FVector UGrabber::GetPlayerReach() const
 {
 	FVector StartLocation;
 	FRotator PlayerViewPointRotation;
@@ -110,6 +107,16 @@ FTwoVectors UGrabber::GetLineTracePoints() const
 		OUT StartLocation,
 		OUT PlayerViewPointRotation
 	);
-	FVector EndLocation = StartLocation + PlayerViewPointRotation.Vector() * Reach;
-	return FTwoVectors(StartLocation, EndLocation);
+	return StartLocation + PlayerViewPointRotation.Vector() * Reach;
+}
+
+FVector UGrabber::GetPlayerPositionWorld() const
+{
+	FVector StartLocation;
+	FRotator PlayerViewPointRotation;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
+		OUT StartLocation,
+		OUT PlayerViewPointRotation
+	);
+	return StartLocation;
 }
