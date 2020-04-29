@@ -24,7 +24,10 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 	//
-	
+	if (!PressurePlate)
+	{
+		return;
+	}
 	Owner = GetOwner();
 }
 
@@ -41,7 +44,10 @@ void UOpenDoor::CloseDoor()
 void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	if (!PressurePlate)
+	{
+		return;
+	}
 	if (PressurePlate && GetTotalMassOfActorsOnPlate() > 30.f)
 	{
 		UE_LOG(LogTemp, Warning, TEXT ("HEEEE"));
@@ -57,8 +63,13 @@ void UOpenDoor::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 float UOpenDoor::GetTotalMassOfActorsOnPlate()
 {
+
 	float TotalMass = 0.f;
 	TArray<AActor *> OverlapingActors;
+	if (!PressurePlate)
+	{
+		return TotalMass;
+	}
 	PressurePlate->GetOverlappingActors(OUT OverlapingActors);
 
 	for (const auto *Actor : OverlapingActors)

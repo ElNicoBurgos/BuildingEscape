@@ -21,6 +21,14 @@ void UGrabber::BeginPlay()
 
 	FindPhysicsHandleComponent();
 	
+	if (!PhysicsHandle)
+	{
+		return;
+	}
+	if (!InputComponent)
+	{
+		return;
+	}
 }
 
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -42,6 +50,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 /// Look for attached Physics Handle
 void UGrabber::FindPhysicsHandleComponent()
 {
+	if (!PhysicsHandle)
+	{
+		return;
+	}
 	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (PhysicsHandle == nullptr)
 	{
@@ -52,6 +64,12 @@ void UGrabber::FindPhysicsHandleComponent()
 /// Look for attached InputComponent (only appears at run time)
 void UGrabber::SetupInputComponent()
 {
+	if (!InputComponent)
+	{
+		return;
+	}
+
+
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
 	if (InputComponent != nullptr)
@@ -82,6 +100,10 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 
 void UGrabber::Grab()
 {
+	if (!PhysicsHandle)
+	{
+		return;
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Press grab button"));
 	
 	FHitResult HitResult = GetFirstPhysicsBodyInReach();
