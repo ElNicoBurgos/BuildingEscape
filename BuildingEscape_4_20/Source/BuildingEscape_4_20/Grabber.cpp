@@ -50,11 +50,12 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 /// Look for attached Physics Handle
 void UGrabber::FindPhysicsHandleComponent()
 {
+	
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (!PhysicsHandle)
 	{
 		return;
 	}
-	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	if (PhysicsHandle == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT(" %s missing handle physics component"), *(GetOwner()->GetName()));
@@ -64,12 +65,6 @@ void UGrabber::FindPhysicsHandleComponent()
 /// Look for attached InputComponent (only appears at run time)
 void UGrabber::SetupInputComponent()
 {
-	if (!InputComponent)
-	{
-		return;
-	}
-
-
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
 	if (InputComponent != nullptr)
@@ -100,15 +95,15 @@ FHitResult UGrabber::GetFirstPhysicsBodyInReach() const
 
 void UGrabber::Grab()
 {
-	if (!PhysicsHandle)
-	{
-		return;
-	}
+	
 	UE_LOG(LogTemp, Warning, TEXT("Press grab button"));
 	
 	FHitResult HitResult = GetFirstPhysicsBodyInReach();
 	auto ComponentToGrab = HitResult.GetComponent();
-	
+	if (!PhysicsHandle)
+	{
+		return;
+	}
 
 	if (HitResult.GetActor())
 	{
@@ -118,6 +113,10 @@ void UGrabber::Grab()
 
 void UGrabber::Release()
 {
+	if (!PhysicsHandle)
+	{
+		return;
+	}
 	PhysicsHandle->ReleaseComponent();	
 }
 
